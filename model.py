@@ -16,7 +16,7 @@ from torchvision.models import resnet34, ResNet34_Weights
 
 
 # ------------------------------------------------------------------------
-# 3) Encoder (ResNet-34) + Decoder (LSTM)
+# Encoder (ResNet-34) + Decoder (LSTM)
 # ------------------------------------------------------------------------
 
 class CNNEncoder(nn.Module):

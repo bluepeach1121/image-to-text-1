@@ -2,7 +2,7 @@ import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from tqdm import tqdm  # <- ADD THIS IMPORT
+from tqdm import tqdm  
 
 
 def train_one_epoch(
@@ -74,7 +74,6 @@ def evaluate_model(encoder, decoder, dataloader, device):
     criterion = nn.CrossEntropyLoss(ignore_index=0)  # assuming <PAD> = 0
     total_loss = 0.0
     
-    # Wrap the dataloader with tqdm for a progress bar
     loop = tqdm(dataloader, desc="Evaluating")
     
     with torch.no_grad():

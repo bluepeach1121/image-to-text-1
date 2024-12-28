@@ -1,1 +1,4 @@
 __pycache__/
+encoder.pth
+decoder.pth
+vocab.pkl

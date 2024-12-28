@@ -22,26 +22,25 @@ from train import train_one_epoch, evaluate_model
 
 
 def main():
-    # Paths (Windows-style, use raw string or double backslashes)
     ANNOTATION_FILE = r"C:\Users\olawa\Downloads\annotations_trainval2017\annotations\captions_val2017.json"
     IMAGE_DIR = r"C:\Users\olawa\Downloads\val2017\val2017"
     
-    # 1) Build vocab
+    #Build vocab
     print("Building vocabulary...")
     word2idx, idx2word = build_vocab(ANNOTATION_FILE, min_freq=2)
     vocab_size = len(word2idx)
     print(f"Vocabulary size: {vocab_size}")
     
-    # 2) Load image IDs
+    #Load image IDs
     with open(ANNOTATION_FILE, 'r') as f:
         coco_anns = json.load(f)
     all_img_ids = [img['id'] for img in coco_anns['images']]
     
-    # 3) Train/test split
+    # Train/test split
     train_ids, test_ids = train_test_split(all_img_ids, test_size=0.2, random_state=42)
     print(f"Train set size: {len(train_ids)} | Test set size: {len(test_ids)}")
     
-    # 4) Transforms
+    # Transforms
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -49,7 +48,7 @@ def main():
                              std=[0.229, 0.224, 0.225]),
     ])
     
-    # 5) Create Datasets
+    # Create Datasets
     train_dataset = CocoValDataset(
         image_dir=IMAGE_DIR,
         annotation_file=ANNOTATION_FILE,
@@ -67,11 +66,11 @@ def main():
         idx2word=idx2word
     )
     
-    # 6) DataLoaders
+    # DataLoaders
     train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, num_workers=0)
     test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False, num_workers=0)
     
-    # 7) Initialize Model
+    #Initialize Model
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     embed_size = 256
     hidden_size = 512
@@ -83,7 +82,7 @@ def main():
     encoder_optimizer = optim.AdamW(encoder.parameters(), lr=1e-4)
     decoder_optimizer = optim.AdamW(decoder.parameters(), lr=1e-4)
     
-    # 8) Training loop with progress bars
+    #Training loop with tqdm
     epochs = 6
     for epoch in range(epochs):
         train_loss = train_one_epoch(
@@ -106,7 +105,6 @@ def main():
               f"Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f}")
     
     print("Training complete!, saving model weights")
-        # After finishing all epochs:
     print("Training complete! Saving model...")
 
     # Save encoder
@@ -115,7 +113,7 @@ def main():
     # Save decoder
     torch.save(decoder.state_dict(), "decoder.pth")
 
-    # (Optional) Save word2idx, idx2word (the vocabulary)
+    #Save word2idx, idx2word --> I dont think I'll need this but whatever
     import pickle
     with open("vocab.pkl", "wb") as f:
         pickle.dump((word2idx, idx2word), f)

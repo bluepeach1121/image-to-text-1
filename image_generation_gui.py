@@ -9,17 +9,16 @@ from outputgeneration import generate_caption
 
 
 def main():
-    # 1) Set up the device
+    #Set up the device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Using device:", device)
 
-    # 2) Load vocabulary
+    #Load vocabulary
     with open("vocab.pkl", "rb") as f:
         word2idx, idx2word = pickle.load(f)
     vocab_size = len(word2idx)
     print("Vocabulary loaded. Vocab size:", vocab_size)
 
-    # 3) Load models
     embed_size = 256
     hidden_size = 512
     encoder = CNNEncoder(embed_size=embed_size).to(device)
@@ -31,7 +30,7 @@ def main():
     decoder.eval()
     print("Models loaded successfully.")
 
-    # 4) Define image transformations
+    #image transformations
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -39,10 +38,10 @@ def main():
                              std=[0.229, 0.224, 0.225]),
     ])
 
-    # 5) Use tkinter to pick an image
+    #Use tkinter to pick an image
     print("Opening file dialog to select an image...")
     root = Tk()
-    root.withdraw()  # Hide the root window
+    root.withdraw()  
     image_path = filedialog.askopenfilename(
         title="Select an Image",
         filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.bmp;*.gif")]
@@ -54,10 +53,10 @@ def main():
     
     print(f"Image selected: {image_path}")
 
-    # 6) Load and preprocess the image
+    #Load and preprocess the image
     image = Image.open(image_path).convert('RGB')
 
-    # 7) Generate caption
+    #Generate caption
     caption = generate_caption(
         encoder=encoder,
         decoder=decoder,
@@ -70,7 +69,7 @@ def main():
     )
     print("Generated Caption:", caption)
 
-    # 8) Display the image with the caption
+    #Display the image with the caption
     plt.imshow(image)
     plt.title(caption, fontsize=12)
     plt.axis('off')

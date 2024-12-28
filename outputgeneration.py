@@ -43,10 +43,10 @@ def generate_caption(
     with torch.no_grad():
         features = encoder(image)  # Expect shape [1, embed_size]
         print("DEBUG: encoder output shape =", features.shape)
-        # Example: torch.Size([1, 256])
 
     # ---------------------------------------------------------------------
-    # 3) Greedy Decode (One Word at a Time)
+    # 3) Greedy Decode (One Word at a Time) --> may be updated in the future, there's most
+    # likely some hidden bugs here.. No time RN
     # ---------------------------------------------------------------------
     # We'll manually pass each predicted token into the LSTM.
 
@@ -57,7 +57,7 @@ def generate_caption(
     # Current input token = <SOS>
     # shape [1], i.e. just one token, for batch size 1
     current_input = torch.tensor([start_token], device=device)  # shape [1]
-    # We'll expand it to [1,1] so it becomes [batch=1, seq_len=1]
+    # expand it to [1,1] so it becomes [batch=1, seq_len=1]
     current_input = current_input.unsqueeze(0)  # shape [1,1]
 
     print("DEBUG: initial current_input shape =", current_input.shape)

@@ -41,7 +41,6 @@ class CocoValDataset(Dataset):
         self.sos_token = sos_token
         self.eos_token = eos_token
         
-        # Load COCO caption annotations
         with open(annotation_file, 'r') as f:
             coco_anns = json.load(f)
         
@@ -77,7 +76,6 @@ class CocoValDataset(Dataset):
         if self.transform:
             image = self.transform(image)
         
-        # Randomly pick one caption from the available
         captions = self.img_id_to_caps[img_id]
         caption_str = random.choice(captions)
 
@@ -89,7 +87,6 @@ class CocoValDataset(Dataset):
         for w in tokens:
             token_ids.append(self.word2idx.get(w, self.word2idx['<UNK>']))
         
-        # Pad or truncate
         token_ids = token_ids[:self.max_caption_len]
         token_ids += [self.word2idx['<PAD>']] * (self.max_caption_len - len(token_ids))
         
@@ -101,7 +98,9 @@ class CocoValDataset(Dataset):
 
 def build_vocab(annotation_file, min_freq=2):
     """
-    Very naive function to build a vocabulary from all captions in COCO val2017.
+    function to build a vocabulary from all captions in COCO val2017.
+    Words appearing less frequently are excluded.
+
     """
     with open(annotation_file, 'r') as f:
         coco_anns = json.load(f)
